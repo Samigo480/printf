@@ -1,70 +1,66 @@
 #include "main.h"
 
-/**
- * print_output - Prints the contents of the buffer if it exists
- * @buff: Array of chars representing the buffer
- * @index: Pointer to the current index in the buffer
- */
-void print_output(char buff[], int *index);
+void print_buffer(char buffer[], int *buff_ind);
 
 /**
- * printf_custom - Custom printf function
- * @format: The format string
- * Return: Number of printed characters
+ * _printf - Printf function
+ * @format: format.
+ * Return: Printed chars.
  */
-int printf_custom(const char *format, ...)
+int _printf(const char *format, ...)
 {
-	int j, total_printed = 0, printed_chars = 0;
-	int flags, width, precision, size, index = 0;
-	va_list args;
-	char buff[BUFF_SIZE];
+	int k, printed = 0, printed_chars = 0;
+	int flag, width, precision, size, buff_ind = 0;
+	va_list j;
+	char buffer[BUFF_SIZE];
 
 	if (format == NULL)
 		return (-1);
 
-	va_start(args, format);
+	va_start(j, format);
 
-	for (j = 0; format && format[j] != '\0'; j++)
+	for (k = 0; format && format[k] != '\0'; k++)
 	{
-		if (format[j] != '%')
+		if (format[k] != '%')
 		{
-			buff[index++] = format[j];
-			if (index == BUFF_SIZE)
-				print_output(buff, &index);
+			buffer[buff_ind++] = format[k];
+			if (buff_ind == BUFF_SIZE)
+				print_buffer(buffer, &buff_ind);
+			/* write(1, &format[i], 1);*/
 			printed_chars++;
 		}
 		else
 		{
-			print_output(buff, &index);
-			flags = get_flags(format, &j);
-			width = get_width(format, &j, args);
-			precision = get_precision(format, &j, args);
-			size = get_size(format, &j);
-			++j;
-			total_printed = handle_print(format, &j, args, buff,
-				flags, width, precision, size);
-			if (total_printed == -1)
+			print_buffer(buffer, &buff_ind);
+			flag = get_flags(format, &k);
+			width = get_width(format, &k, j);
+			precision = get_precision(format, &k, j);
+			size = get_size(format, &k);
+			++k;
+			printed = handle_print(format, &k, j, buffer,
+				flag, width, precision, size);
+			if (printed == -1)
 				return (-1);
-			printed_chars += total_printed;
+			printed_chars += printed;
 		}
 	}
 
-	print_output(buff, &index);
+	print_buffer(buffer, &buff_ind);
 
-	va_end(args);
+	va_end(j);
 
 	return (printed_chars);
 }
 
 /**
- * print_output - Prints the contents of the buffer if it exists
- * @buff: Array of chars representing the buffer
- * @index: Pointer to the current index in the buffer
+ * print_buffer - Prints the contents of the buffer if it exist
+ * @buffer: Array of chars
+ * @buff_ind: Index at which to add next char, represents the length.
  */
-void print_output(char buff[], int *index)
+void print_buffer(char buffer[], int *buff_ind)
 {
-	if (*index > 0)
-		write(1, &buff[0], *index);
+	if (*buff_ind > 0)
+		write(1, &buffer[0], *buff_ind);
 
-	*index = 0;
+	*buff_ind = 0;
 }
