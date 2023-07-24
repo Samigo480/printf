@@ -33,47 +33,48 @@ int print_char(va_list types, char buffer[],
 int print_string(va_list types, char buffer[],
 	int flags, int width, int precision, int size)
 {
-	int length = 0, i;
-	char *str = va_arg(types, char *);
+	int l = 0, k;
+	char *s = va_arg(types, char *);
 
 	UNUSED(buffer);
 	UNUSED(flags);
 	UNUSED(width);
 	UNUSED(precision);
 	UNUSED(size);
-	if (str == NULL)
+	if (s == NULL)
 	{
-		str = "(null)";
+		s = "(null)";
 		if (precision >= 6)
-			str = "      ";
+			s = "      ";
 	}
 
-	while (str[length] != '\0')
-		length++;
+	while (s[l] != '\0')
+		l++;
 
-	if (precision >= 0 && precision < length)
-		length = precision;
+	if (precision >= 0 && precision < l)
+		l = precision;
 
-	if (width > length)
+	if (width > l)
 	{
 		if (flags & F_MINUS)
 		{
-			write(1, &str[0], length);
-			for (i = width - length; i > 0; i--)
+			write(1, &s[0], l);
+			for (k = width - l; k > 0; k--)
 				write(1, " ", 1);
 			return (width);
 		}
 		else
 		{
-			for (i = width - length; i > 0; i--)
+			for (k = width - l; k > 0; k--)
 				write(1, " ", 1);
-			write(1, &str[0], length);
+			write(1, &s[0], l);
 			return (width);
 		}
 	}
 
-	return (write(1, str, length));
+	return (write(1, s, l));
 }
+
 /************************* PRINT PERCENT SIGN *************************/
 /**
  * print_percent - Prints a percent sign
@@ -111,34 +112,34 @@ int print_percent(va_list types, char buffer[],
 int print_int(va_list types, char buffer[],
 	int flags, int width, int precision, int size)
 {
-	int i = BUFF_SIZE - 2;
+	int k = BUFF_SIZE - 2;
 	int is_negative = 0;
-	long int n = va_arg(types, long int);
+	long int m = va_arg(types, long int);
 	unsigned long int num;
 
-	n = convert_size_number(n, size);
+	m = convert_size_number(m, size);
 
-	if (n == 0)
-		buffer[i--] = '0';
+	if (m == 0)
+		buffer[k--] = '0';
 
 	buffer[BUFF_SIZE - 1] = '\0';
-	num = (unsigned long int)n;
+	num = (unsigned long int)m;
 
-	if (n < 0)
+	if (m < 0)
 	{
-		num = (unsigned long int)((-1) * n);
+		num = (unsigned long int)((-1) * m);
 		is_negative = 1;
 	}
 
 	while (num > 0)
 	{
-		buffer[i--] = (num % 10) + '0';
+		buffer[k--] = (num % 10) + '0';
 		num /= 10;
 	}
 
-	i++;
+	k++;
 
-	return (write_number(is_negative, i, buffer, flags, width, precision, size));
+	return (write_number(is_negative, k, buffer, flags, width, precision, size));
 }
 
 /************************* PRINT BINARY *************************/
